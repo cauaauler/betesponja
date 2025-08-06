@@ -1,0 +1,78 @@
+@{
+    ViewData["Title"] = "Todas as Competições da Fenda do Biquíni";
+    var matches = ViewBag.Matches as IEnumerable<FutebolSimplesBetsHub.Models.ViewModels.MatchViewModel>;
+    var competitions = ViewBag.Competitions as IEnumerable<string>;
+    var selectedCompetition = ViewBag.SelectedCompetition as string ?? "all";
+    var searchTerm = ViewBag.SearchTerm as string ?? "";
+}
+
+<div class="min-h-screen bg-gradient-to-b from-cyan-100 to-blue-200 pt-16">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-blue-900 mb-8">Todas as Competições da Fenda do Biquíni</h1>
+        
+        <!-- Filters -->
+        <div class="bg-white rounded-lg p-6 shadow-md mb-8 border-4 border-yellow-400">
+            <form method="get" class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-blue-900 mb-2">
+                        Competição
+                    </label>
+                    <select name="competition" class="w-full p-3 border-2 border-yellow-400 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900">
+                        <option value="all" selected="@(selectedCompetition == "all")">Todas as Competições</option>
+                        @if (competitions != null)
+                        {
+                            foreach (var competition in competitions)
+                            {
+                                <option value="@competition" selected="@(selectedCompetition == competition)">@competition</option>
+                            }
+                        }
+                    </select>
+                </div>
+                
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-blue-900 mb-2">
+                        Buscar personagens
+                    </label>
+                    <input type="text" name="search" placeholder="Digite o nome de um personagem..." 
+                           value="@searchTerm" 
+                           class="w-full p-3 border-2 border-yellow-400 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900" />
+                </div>
+                
+                <div class="flex items-end">
+                    <button type="submit" class="bg-blue-900 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition-colors">
+                        Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Count -->
+        <div class="mb-6">
+            <p class="text-blue-900 font-medium">
+                Mostrando @(matches?.Count() ?? 0) competição@(matches?.Count() == 1 ? "" : "ões")
+                @if (selectedCompetition != "all" && !string.IsNullOrEmpty(selectedCompetition))
+                {
+                    <span>em @selectedCompetition</span>
+                }
+            </p>
+        </div>
+
+        <!-- Matches Grid -->
+        @if (matches != null && matches.Any())
+        {
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach (var match in matches)
+                {
+                    <partial name="_MatchCard" model="match" />
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-12 bg-white rounded-lg border-4 border-yellow-400">
+                <div class="text-gray-400 text-lg mb-2">Nenhuma competição encontrada</div>
+                <p class="text-gray-600">Tente alterar os filtros de busca</p>
+            </div>
+        }
+    </div>
+</div> 

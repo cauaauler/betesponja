@@ -1,0 +1,45 @@
+@model FutebolSimplesBetsHub.Models.ViewModels.MatchViewModel
+
+<div class="bg-white rounded-lg shadow-md p-6 border-2 border-yellow-400 hover:shadow-lg transition-shadow">
+    <div class="flex items-center justify-between mb-4">
+        <span class="text-sm text-gray-600 font-medium">@Model.Competition</span>
+        @if (Model.IsLive)
+        {
+            <div class="flex items-center text-pink-400 text-sm font-medium">
+                <div class="w-2 h-2 bg-pink-400 rounded-full mr-2 animate-pulse"></div>
+                AO VIVO
+            </div>
+        }
+    </div>
+    <div class="text-center mb-4">
+        <div class="flex items-center justify-between">
+            <div class="text-center flex-1">
+                <h3 class="font-semibold text-lg text-blue-900">@Model.Participant1</h3>
+            </div>
+            <div class="mx-4 text-gray-400">
+                <span class="text-yellow-400 text-2xl">&#11088;</span>
+            </div>
+            <div class="text-center flex-1">
+                <h3 class="font-semibold text-lg text-blue-900">@Model.Participant2</h3>
+            </div>
+        </div>
+        <div class="flex items-center justify-center mt-2 text-gray-600">
+            <span class="mr-1">&#128337;</span>
+            <span class="text-sm">@Model.Date às @Model.Time</span>
+        </div>
+    </div>
+    <div class="grid grid-cols-3 gap-2 mb-4">
+        <button class="bg-gray-100 hover:bg-blue-900 hover:text-white p-3 rounded-lg text-center transition-colors group border-2 border-transparent hover:border-yellow-400">
+            <div class="text-xs text-gray-600 group-hover:text-white/80">@Model.Participant1</div>
+            <div class="font-bold">@Model.OddsParticipant1.ToString("F2")</div>
+        </button>
+        <button class="bg-gray-100 hover:bg-pink-400 hover:text-white p-3 rounded-lg text-center transition-colors group border-2 border-transparent hover:border-yellow-400">
+            <div class="text-xs text-gray-600 group-hover:text-white/80">Empate</div>
+            <div class="font-bold">@Model.OddsDraw.ToString("F2")</div>
+        </button>
+        <button class="bg-gray-100 hover:bg-blue-900 hover:text-white p-3 rounded-lg text-center transition-colors group border-2 border-transparent hover:border-yellow-400">
+            <div class="text-xs text-gray-600 group-hover:text-white/80">@Model.Participant2</div>
+            <div class="font-bold">@Model.OddsParticipant2.ToString("F2")</div>
+        </button>
+    </div>
+</div> 

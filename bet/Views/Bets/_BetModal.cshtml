@@ -1,0 +1,86 @@
+@model FutebolSimplesBetsHub.Models.ViewModels.BetViewModel
+
+<div id="betModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-blue-900">Confirmar Aposta</h3>
+            <button onclick="closeBetModal()" class="text-gray-500 hover:text-gray-700">
+                <span class="text-2xl">&times;</span>
+            </button>
+        </div>
+        
+        <div class="mb-4">
+            <div class="text-center mb-4">
+                <h4 class="font-semibold text-blue-900">@Model.Participant1 vs @Model.Participant2</h4>
+                <p class="text-gray-600">@Model.Competition</p>
+            </div>
+            
+            <div class="bg-gray-100 rounded-lg p-4 mb-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Tipo de Aposta:</span>
+                    <span class="font-semibold text-blue-900">
+                        @(Model.BetType == "participant1" ? Model.Participant1 :
+                          Model.BetType == "participant2" ? Model.Participant2 :
+                          "Empate")
+                    </span>
+                </div>
+                <div class="flex justify-between items-center mt-2">
+                    <span class="text-gray-600">Odd:</span>
+                    <span class="font-semibold text-blue-900">@Model.Odds.ToString("F2")</span>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Valor da Aposta (R$)
+                </label>
+                <input type="number" id="betAmount" min="0.01" step="0.01" 
+                       class="w-full p-3 border-2 border-yellow-400 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900"
+                       oninput="calculatePotentialWin()" />
+            </div>
+            
+            <div class="bg-green-100 rounded-lg p-4 mb-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700">Ganho Potencial:</span>
+                    <span class="font-bold text-green-600" id="potentialWin">R$ 0,00</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex space-x-3">
+            <button onclick="closeBetModal()" 
+                    class="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors">
+                Cancelar
+            </button>
+            <button onclick="confirmBet()" 
+                    class="flex-1 bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors">
+                Confirmar Aposta
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function calculatePotentialWin() {
+    const amount = parseFloat(document.getElementById('betAmount').value) || 0;
+    const odds = @Model.Odds;
+    const potentialWin = amount * odds;
+    document.getElementById('potentialWin').textContent = `R$ ${potentialWin.toFixed(2)}`;
+}
+
+function confirmBet() {
+    const amount = parseFloat(document.getElementById('betAmount').value);
+    if (!amount || amount <= 0) {
+        alert('Por favor, insira um valor válido para a aposta.');
+        return;
+    }
+    
+    // Aqui você implementaria a chamada AJAX para salvar a aposta
+    alert(`Aposta confirmada! Valor: R$ ${amount.toFixed(2)}`);
+    closeBetModal();
+}
+
+function closeBetModal() {
+    document.getElementById('betModal').classList.add('hidden');
+}
+</script> 
