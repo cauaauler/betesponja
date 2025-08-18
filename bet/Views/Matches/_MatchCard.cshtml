@@ -46,10 +46,42 @@
         </button>
     </div>
 </div>
-
+<!-- Modal de aposta -->
+<div id="betModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="modal-content bg-white p-6 rounded-xl shadow-lg w-80 transform transition-all duration-200">
+        <!-- Conteúdo será inserido pelo JavaScript -->
+    </div>
+</div>
 <script>
 function openBetModal(matchId, betType, odds) {
-    // Implementar modal de aposta
-    alert(`Aposta: ${betType} com odds ${odds}`);
+    const modal = document.getElementById('betModal');
+    const modalContent = modal.querySelector('.modal-content');
+
+    modalContent.innerHTML = `
+        <h2 class="text-lg font-semibold mb-2">Aposta</h2>
+        <p>Partida ID: ${matchId}</p>
+        <p>Tipo de aposta: ${betType}</p>
+        <p>Odds: ${odds}</p>
+        <div class="mt-4 flex justify-between">
+            <button class="bg-green-500 text-white px-4 py-2 rounded" onclick="confirmBet(${matchId}, '${betType}', ${odds})">Confirmar</button>
+            <button class="bg-red-500 text-white px-4 py-2 rounded" onclick="closeBetModal()">Cancelar</button>
+        </div>
+    `;
+
+    modal.classList.add('show');
+    modal.style.display = 'flex';
 }
+
+function closeBetModal() {
+    const modal = document.getElementById('betModal');
+    modal.classList.remove('show');
+    setTimeout(() => { modal.style.display = 'none'; }, 200); // espera a animação
+}
+
+
+function confirmBet(matchId, betType, odds) {
+    alert(`Aposta confirmada: ${betType} com odds ${odds} na partida ${matchId}`);
+    closeBetModal();
+}
+
 </script> 

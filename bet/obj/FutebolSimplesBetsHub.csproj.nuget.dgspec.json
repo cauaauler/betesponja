@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/marcohartz/Documents/IFRS/futebol-simples-bets-hub/FutebolSimplesBetsHub.csproj": {}
+    "/home/a/Área de Trabalho/betesponja/bet/FutebolSimplesBetsHub.csproj": {}
   },
   "projects": {
-    "/Users/marcohartz/Documents/IFRS/futebol-simples-bets-hub/FutebolSimplesBetsHub.csproj": {
+    "/home/a/Área de Trabalho/betesponja/bet/FutebolSimplesBetsHub.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/marcohartz/Documents/IFRS/futebol-simples-bets-hub/FutebolSimplesBetsHub.csproj",
+        "projectUniqueName": "/home/a/Área de Trabalho/betesponja/bet/FutebolSimplesBetsHub.csproj",
         "projectName": "FutebolSimplesBetsHub",
-        "projectPath": "/Users/marcohartz/Documents/IFRS/futebol-simples-bets-hub/FutebolSimplesBetsHub.csproj",
-        "packagesPath": "/Users/marcohartz/.nuget/packages/",
-        "outputPath": "/Users/marcohartz/Documents/IFRS/futebol-simples-bets-hub/obj/",
+        "projectPath": "/home/a/Área de Trabalho/betesponja/bet/FutebolSimplesBetsHub.csproj",
+        "packagesPath": "/home/a/.nuget/packages/",
+        "outputPath": "/home/a/Área de Trabalho/betesponja/bet/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/marcohartz/.nuget/NuGet/NuGet.Config"
+          "/home/a/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -38,7 +38,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net9.0": {
@@ -88,7 +88,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.303/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
