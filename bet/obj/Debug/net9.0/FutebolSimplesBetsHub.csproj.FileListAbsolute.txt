@@ -456,12 +456,6 @@
 /Users/marcohartz/Documents/IFRS/futebol-simples-bets-hub/obj/Debug/net9.0/FutebolSimplesBetsHub.genruntimeconfig.cache
 /Users/marcohartz/Documents/IFRS/futebol-simples-bets-hub/obj/Debug/net9.0/ref/FutebolSimplesBetsHub.dll
 /home/a/Área de Trabalho/betesponja/bet/bin/Debug/net9.0/appsettings.json
-/home/a/Área de Trabalho/betesponja/bet/bin/Debug/net9.0/components.json
-/home/a/Área de Trabalho/betesponja/bet/bin/Debug/net9.0/package-lock.json
-/home/a/Área de Trabalho/betesponja/bet/bin/Debug/net9.0/package.json
-/home/a/Área de Trabalho/betesponja/bet/bin/Debug/net9.0/tsconfig.app.json
-/home/a/Área de Trabalho/betesponja/bet/bin/Debug/net9.0/tsconfig.json
-/home/a/Área de Trabalho/betesponja/bet/bin/Debug/net9.0/tsconfig.node.json
 /home/a/Área de Trabalho/betesponja/bet/bin/Debug/net9.0/FutebolSimplesBetsHub.staticwebassets.endpoints.json
 /home/a/Área de Trabalho/betesponja/bet/bin/Debug/net9.0/FutebolSimplesBetsHub
 /home/a/Área de Trabalho/betesponja/bet/bin/Debug/net9.0/FutebolSimplesBetsHub.deps.json
