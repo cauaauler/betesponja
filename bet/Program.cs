@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using FutebolSimplesBetsHub.Data;
 using FutebolSimplesBetsHub.Services;
+using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +20,21 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IStatisticsService, StatisticsService>();
 builder.Services.AddScoped<IOddsService, OddsService>();
 
-// Add HttpClient for API calls
+// HttpClient global
 builder.Services.AddHttpClient();
+
+// HttpClient tipado para OddsService com headers corretos
+builder.Services.AddHttpClient<IOddsService, OddsService>(client =>
+{
+    client.BaseAddress = new Uri("https://v3.football.api-sports.io/");
+    var apiKey = builder.Configuration["FootballApi:ApiKey"] ?? string.Empty;
+    if (client.DefaultRequestHeaders.Contains("x-apisports-key"))
+        client.DefaultRequestHeaders.Remove("x-apisports-key");
+    client.DefaultRequestHeaders.Add("x-apisports-key", apiKey);
+    client.DefaultRequestHeaders.Accept.Clear();
+    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("BetSponge/1.0");
+});
 
 // Add Session
 builder.Services.AddDistributedMemoryCache();

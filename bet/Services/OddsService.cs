@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Globalization;
 using FutebolSimplesBetsHub.Models;
 
 namespace FutebolSimplesBetsHub.Services
@@ -6,24 +7,17 @@ namespace FutebolSimplesBetsHub.Services
     public class OddsService : IOddsService
     {
         private readonly HttpClient _httpClient;
-        private readonly string _apiKey;
-        private readonly string _baseUrl = "https://v3.football.api-sports.io";
+        private readonly IConfiguration _config;
 
         public OddsService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
-            _apiKey = configuration["FootballApi:ApiKey"] ?? "test_08d2254f9c8f4f1a2154748848142b";
-            
-            // Configurar headers da API
-            _httpClient.DefaultRequestHeaders.Add("x-rapidapi-key", _apiKey);
-            _httpClient.DefaultRequestHeaders.Add("x-rapidapi-host", "v3.football.api-sports.io");
+            _config = configuration;
         }
         
-
         public async Task<(decimal home, decimal draw, decimal away, DateTime matchTime, string realTeams)> GetRealisticOddsAsync()
         {
-            // Lista de personagens do Bob Esponja
-            var bobEsponjaCharacters = new[]
+            var characters = new[]
             {
                 "Bob Esponja", "Patrick", "Lula Molusco", "Sandy", "Sr. Siriguejo", 
                 "Plankton", "Karen", "Gary", "Sra. Puff", "Perola", "Larry Lagosta",
@@ -32,109 +26,78 @@ namespace FutebolSimplesBetsHub.Services
 
             try
             {
-                // Buscar partidas com odds da API
-                var response = await _httpClient.GetAsync($"{_baseUrl}/odds?date={DateTime.Today:yyyy-MM-dd}");
-                response.EnsureSuccessStatusCode();
+                // The Odds API params
+                var apiKey = _config["OddsApi:ApiKey"] ?? "";
+                var regions = "eu"; // Europe
+                var markets = "h2h"; // 1X2
+                var dateFormat = "unix";
+                var sport = "soccer_epl"; // exemplo: Premier League; pode-se trocar/expandir
 
-                var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"API Response: {content.Substring(0, Math.Min(200, content.Length))}...");
-                
-                var apiResponse = JsonSerializer.Deserialize<ApiResponse<List<ApiMatch>>>(content);
+                var url = $"https://api.the-odds-api.com/v4/sports/{sport}/odds/?apiKey={apiKey}&regions={regions}&markets={markets}&dateFormat={dateFormat}";
+                var res = await _httpClient.GetAsync(url);
+                res.EnsureSuccessStatusCode();
+                var json = await res.Content.ReadAsStringAsync();
+                var events = JsonSerializer.Deserialize<List<OddsApiEvent>>(json);
 
-                if (apiResponse?.Response != null && apiResponse.Response.Any())
+                if (events != null && events.Any())
                 {
-                    // Filtrar partidas que têm odds
-                    var matchesWithOdds = apiResponse.Response
-                        .Where(match => match.Odds != null && 
-                                      match.Odds.Home.HasValue && 
-                                      match.Odds.Draw.HasValue && 
-                                      match.Odds.Away.HasValue)
-                        .ToList();
+                    // Escolher evento futuro
+                    var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                    var candidate = events.FirstOrDefault(e => new DateTimeOffset(e.CommenceTime).ToUnixTimeSeconds() > now);
+                    candidate ??= events.First();
 
-                    if (matchesWithOdds.Any())
+                    // Logar no console as partidas (até 5) para referência
+                    Console.WriteLine("Odds API - exemplos de eventos:");
+                    foreach (var ev in events.Take(5))
                     {
-                        // Pegar uma partida aleatória que tem odds
-                        var apiRandom = new Random();
-                        var randomMatch = matchesWithOdds[apiRandom.Next(matchesWithOdds.Count)];
-                        
-                        // Extrair horário da partida
-                        var matchTime = DateTime.Parse(randomMatch.Fixture.Date.ToString());
-                        
-                        // Verificar se a partida é futura
-                        if (matchTime > DateTime.Now)
+                        Console.WriteLine($" - {ev.HomeTeam} vs {ev.AwayTeam} @ {ev.CommenceTime:o}");
+                    }
+
+                    // Pegar mercado h2h do primeiro bookmaker com dados
+                    foreach (var bm in candidate.Bookmakers)
+                    {
+                        var h2h = bm.Markets.FirstOrDefault(m => m.Key == "h2h");
+                        if (h2h == null) continue;
+
+                        decimal? home = null, draw = null, away = null;
+                        foreach (var o in h2h.Outcomes)
                         {
-                            // Gerar personagens aleatórios do Bob Esponja
-                            var apiHomeCharacter = bobEsponjaCharacters[apiRandom.Next(bobEsponjaCharacters.Length)];
-                            var apiAwayCharacter = bobEsponjaCharacters[apiRandom.Next(bobEsponjaCharacters.Length)];
-                            
-                            // Garantir que não seja o mesmo personagem
-                            while (apiAwayCharacter == apiHomeCharacter)
-                            {
-                                apiAwayCharacter = bobEsponjaCharacters[apiRandom.Next(bobEsponjaCharacters.Length)];
-                            }
-                            
-                            var apiCharacterMatch = $"{apiHomeCharacter} vs {apiAwayCharacter}";
-                            
-                            // Usar odds reais da API
-                            var homeOdds = randomMatch.Odds!.Home!.Value;
-                            var drawOdds = randomMatch.Odds!.Draw!.Value;
-                            var awayOdds = randomMatch.Odds!.Away!.Value;
-                            
-                            Console.WriteLine($"Usando odds reais da API: {homeOdds}, {drawOdds}, {awayOdds}");
-                            
-                            return (homeOdds, drawOdds, awayOdds, matchTime, apiCharacterMatch);
+                            var name = o.Name.ToLowerInvariant();
+                            if (name.Contains("draw")) draw = o.Price;
+                            else if (name == candidate.HomeTeam.ToLowerInvariant()) home = o.Price;
+                            else if (name == candidate.AwayTeam.ToLowerInvariant()) away = o.Price;
                         }
-                        else
+
+                        if (home.HasValue && draw.HasValue && away.HasValue)
                         {
-                            Console.WriteLine("Partida da API é passada, usando fallback");
+                            // Personagens aleatórios distintos
+                            var rnd = new Random();
+                            var c1 = characters[rnd.Next(characters.Length)];
+                            var c2 = characters[rnd.Next(characters.Length)];
+                            while (c2 == c1) c2 = characters[rnd.Next(characters.Length)];
+
+                            return (home.Value, draw.Value, away.Value, candidate.CommenceTime, $"{c1} vs {c2}");
                         }
                     }
-                    else
-                    {
-                        Console.WriteLine("Nenhuma partida com odds encontrada na API");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Nenhuma partida encontrada na API");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro ao buscar odds da API: {ex.Message}");
+                Console.WriteLine($"Erro The Odds API: {ex.Message}");
             }
 
-            // Fallback: usar personagens do Bob Esponja aleatórios com horários futuros
-            var random = new Random((int)DateTime.Now.Ticks); // Usar timestamp como seed para variação
-            var homeCharacter = bobEsponjaCharacters[random.Next(bobEsponjaCharacters.Length)];
-            var awayCharacter = bobEsponjaCharacters[random.Next(bobEsponjaCharacters.Length)];
-            
-            // Garantir que não seja o mesmo personagem
-            while (awayCharacter == homeCharacter)
-            {
-                awayCharacter = bobEsponjaCharacters[random.Next(bobEsponjaCharacters.Length)];
-            }
-            
-            var characterMatch = $"{homeCharacter} vs {awayCharacter}";
-            
-            // Gerar horário futuro variado (próximos 7 dias, entre 14h e 23h)
-            var daysFromNow = random.Next(0, 7);
-            var hours = random.Next(14, 23);
-            var minutes = random.Next(0, 60);
-            var fallbackTime = DateTime.Now.AddDays(daysFromNow).Date.AddHours(hours).AddMinutes(minutes);
-            
-            // Adicionar variação adicional para garantir que não seja sempre o mesmo horário
-            var additionalMinutes = random.Next(-30, 30);
-            fallbackTime = fallbackTime.AddMinutes(additionalMinutes);
-            
-            Console.WriteLine("Usando fallback com odds aleatórias");
-            
+            // Fallback
+            var random = new Random((int)DateTime.Now.Ticks);
+            var p1 = characters[random.Next(characters.Length)];
+            var p2 = characters[random.Next(characters.Length)];
+            while (p2 == p1) p2 = characters[random.Next(characters.Length)];
+            var fallbackTime = DateTime.Now.AddDays(random.Next(0, 7)).Date.AddHours(random.Next(14, 23)).AddMinutes(random.Next(0, 60));
             return (
                 GetRandomOddsFromRange(1.5m, 3.5m),
                 GetRandomOddsFromRange(2.5m, 4.0m),
                 GetRandomOddsFromRange(1.5m, 3.5m),
                 fallbackTime,
-                characterMatch
+                $"{p1} vs {p2}"
             );
         }
 
@@ -148,6 +111,13 @@ namespace FutebolSimplesBetsHub.Services
             var random = new Random();
             var value = (decimal)(random.NextDouble() * (double)(max - min) + (double)min);
             return Math.Round(value, 2);
+        }
+
+        private static decimal? ParseOdd(string s)
+        {
+            if (decimal.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var d)) return Math.Round(d, 2);
+            if (decimal.TryParse(s, NumberStyles.Any, CultureInfo.CurrentCulture, out d)) return Math.Round(d, 2);
+            return null;
         }
     }
 }

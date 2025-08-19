@@ -22,6 +22,7 @@ namespace FutebolSimplesBetsHub.Models
         public T Response { get; set; } = default!;
     }
 
+    // Fixtures (para pegar horário real)
     public class ApiMatch
     {
         [JsonPropertyName("fixture")]
@@ -29,13 +30,13 @@ namespace FutebolSimplesBetsHub.Models
         
         [JsonPropertyName("teams")]
         public ApiTeams Teams { get; set; } = new();
-        
-        [JsonPropertyName("odds")]
-        public ApiOdds? Odds { get; set; }
     }
 
     public class ApiFixture
     {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+        
         [JsonPropertyName("date")]
         public DateTime Date { get; set; }
     }
@@ -55,15 +56,46 @@ namespace FutebolSimplesBetsHub.Models
         public string Name { get; set; } = string.Empty;
     }
     
-    public class ApiOdds
+    // Odds (bookmakers/bets/values)
+    public class ApiOddsEntry
     {
-        [JsonPropertyName("home")]
-        public decimal? Home { get; set; }
+        [JsonPropertyName("fixture")]
+        public ApiOddsFixture Fixture { get; set; } = new();
         
-        [JsonPropertyName("draw")]
-        public decimal? Draw { get; set; }
+        [JsonPropertyName("bookmakers")]
+        public List<ApiBookmaker> Bookmakers { get; set; } = new();
+    }
+
+    public class ApiOddsFixture
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+    }
+
+    public class ApiBookmaker
+    {
+        [JsonPropertyName("bets")]
+        public List<ApiBet> Bets { get; set; } = new();
+    }
+
+    public class ApiBet
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
         
-        [JsonPropertyName("away")]
-        public decimal? Away { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = string.Empty;
+        
+        [JsonPropertyName("values")]
+        public List<ApiOddValue> Values { get; set; } = new();
+    }
+
+    public class ApiOddValue
+    {
+        [JsonPropertyName("value")]
+        public string Value { get; set; } = string.Empty; // "Home", "Draw", "Away"
+        
+        [JsonPropertyName("odd")]
+        public string Odd { get; set; } = "0"; // string numérica
     }
 }

@@ -45,7 +45,7 @@ namespace FutebolSimplesBetsHub.Services
                 Email = email,
                 Username = username,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-                Balance = 0,
+                Balance = 1000.00m,
                 Role = "user",
                 IsActive = true,
                 CreatedAt = DateTime.Now
