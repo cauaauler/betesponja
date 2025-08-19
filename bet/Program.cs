@@ -16,6 +16,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<IBetService, BetService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IStatisticsService, StatisticsService>();
+builder.Services.AddScoped<IOddsService, OddsService>();
+
+// Add HttpClient for API calls
+builder.Services.AddHttpClient();
 
 // Add Session
 builder.Services.AddDistributedMemoryCache();
@@ -43,5 +48,10 @@ app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Configure URLs
+app.Urls.Clear();
+app.Urls.Add("http://localhost:5001");
+app.Urls.Add("https://localhost:5002");
 
 app.Run(); 

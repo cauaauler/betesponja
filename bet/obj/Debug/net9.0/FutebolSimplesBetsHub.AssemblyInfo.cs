@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FutebolSimplesBetsHub")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3911ab429fead3bef08bc669f7c248d8460ded69")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c543766ed096e92c99e79fe1b09e9295d9a4bd36")]
 [assembly: System.Reflection.AssemblyProductAttribute("FutebolSimplesBetsHub")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FutebolSimplesBetsHub")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

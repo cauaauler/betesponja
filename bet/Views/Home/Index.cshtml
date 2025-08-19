@@ -2,6 +2,7 @@
     ViewData["Title"] = "Bem-vindos à Fenda do Biquíni!";
     var liveMatches = ViewBag.LiveMatches as IEnumerable<FutebolSimplesBetsHub.Models.ViewModels.MatchViewModel>;
     var upcomingMatches = ViewBag.UpcomingMatches as IEnumerable<FutebolSimplesBetsHub.Models.ViewModels.MatchViewModel>;
+    var statistics = ViewBag.Statistics as FutebolSimplesBetsHub.Models.ViewModels.StatisticsViewModel;
 }
 
 <div class="min-h-screen bg-gradient-to-b from-cyan-100 to-blue-200 pt-16">
@@ -16,16 +17,16 @@
             </p>
             <div class="flex justify-center space-x-8 text-center">
                 <div class="bg-yellow-200 p-4 rounded-lg">
-                    <div class="text-2xl font-bold text-yellow-500">50+</div>
-                    <div class="text-sm text-gray-700">Competições por mês</div>
+                    <div class="text-2xl font-bold text-yellow-500">@(statistics?.TotalMatchesThisWeek ?? 0)</div>
+                    <div class="text-sm text-gray-700">Competições esta semana</div>
                 </div>
                 <div class="bg-pink-200 p-4 rounded-lg">
-                    <div class="text-2xl font-bold text-yellow-500">98%</div>
-                    <div class="text-sm text-gray-700">Pagamentos rápidos</div>
+                    <div class="text-2xl font-bold text-yellow-500">@(statistics?.TotalUsers ?? 0)</div>
+                    <div class="text-sm text-gray-700">Usuários ativos</div>
                 </div>
                 <div class="bg-yellow-200 p-4 rounded-lg">
-                    <div class="text-2xl font-bold text-yellow-500">24/7</div>
-                    <div class="text-sm text-gray-700">Suporte online</div>
+                    <div class="text-2xl font-bold text-yellow-500">@(statistics?.LiveMatchesCount ?? 0)</div>
+                    <div class="text-sm text-gray-700">Ao vivo agora</div>
                 </div>
             </div>
         </div>
@@ -80,22 +81,98 @@
             <h3 class="text-xl font-bold mb-6 text-center text-blue-900">Estatísticas da Fenda do Biquíni</h3>
             <div class="grid md:grid-cols-4 gap-6 text-center">
                 <div>
-                    <div class="text-3xl font-bold text-blue-900">8</div>
+                    <div class="text-3xl font-bold text-blue-900">@(statistics?.TodayMatchesCount ?? 0)</div>
                     <div class="text-gray-600">Competições hoje</div>
                 </div>
                 <div>
-                    <div class="text-3xl font-bold text-green-600">425</div>
+                    <div class="text-3xl font-bold text-green-600">@(statistics?.ActiveBetsCount ?? 0)</div>
                     <div class="text-gray-600">Apostas ativas</div>
                 </div>
                 <div>
-                    <div class="text-3xl font-bold text-pink-400">R$ 15.8k</div>
+                    <div class="text-3xl font-bold text-pink-400">R$ @(statistics?.TotalBetsAmount.ToString("N0") ?? "0")</div>
                     <div class="text-gray-600">Total em apostas</div>
                 </div>
                 <div>
-                    <div class="text-3xl font-bold text-yellow-800">4.2x</div>
+                    <div class="text-3xl font-bold text-yellow-800">@(statistics?.HighestOddsToday.ToString("F1") ?? "0")x</div>
                     <div class="text-gray-600">Maior odd do dia</div>
                 </div>
             </div>
         </section>
+
+        <!-- Additional Statistics -->
+        <section class="mt-8 bg-white rounded-lg p-8 shadow-md border-4 border-pink-400">
+            <h3 class="text-xl font-bold mb-6 text-center text-blue-900">Estatísticas Detalhadas</h3>
+            <div class="grid md:grid-cols-3 gap-6 text-center">
+                <div>
+                    <div class="text-2xl font-bold text-green-600">@(statistics?.UpcomingMatchesCount ?? 0)</div>
+                    <div class="text-gray-600">Próximas competições</div>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-blue-600">R$ @(statistics?.AverageBetAmount.ToString("F2") ?? "0.00")</div>
+                    <div class="text-gray-600">Aposta média</div>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-purple-600">R$ @(statistics?.TotalWinningsToday.ToString("N0") ?? "0")</div>
+                    <div class="text-gray-600">Ganhos hoje</div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- Modal de aposta -->
+<div id="betModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-blue-900">Confirmar Aposta</h3>
+            <button onclick="closeBetModal()" class="text-gray-500 hover:text-gray-700">
+                <span class="text-2xl">&times;</span>
+            </button>
+        </div>
+        
+        <div class="mb-4">
+            <div class="text-center mb-4">
+                <h4 class="font-semibold text-blue-900" id="matchTitle"></h4>
+                <p class="text-gray-600" id="matchCompetition"></p>
+            </div>
+            
+            <div class="bg-gray-100 rounded-lg p-4 mb-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Tipo de Aposta:</span>
+                    <span class="font-semibold text-blue-900" id="betTypeDisplay"></span>
+                </div>
+                <div class="flex justify-between items-center mt-2">
+                    <span class="text-gray-600">Odd:</span>
+                    <span class="font-semibold text-blue-900" id="betOdds"></span>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Valor da Aposta (R$)
+                </label>
+                <input type="number" id="betAmount" min="0.01" step="0.01" 
+                       class="w-full p-3 border-2 border-yellow-400 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900"
+                       oninput="calculatePotentialWin()" />
+            </div>
+            
+            <div class="bg-green-100 rounded-lg p-4 mb-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700">Ganho Potencial:</span>
+                    <span class="font-bold text-green-600" id="potentialWin">R$ 0,00</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex space-x-3">
+            <button onclick="closeBetModal()" 
+                    class="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors">
+                Cancelar
+            </button>
+            <button onclick="confirmBet()" 
+                    class="flex-1 bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors">
+                Confirmar Aposta
+            </button>
+        </div>
     </div>
 </div> 

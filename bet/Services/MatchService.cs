@@ -8,10 +8,12 @@ namespace FutebolSimplesBetsHub.Services
     public class MatchService : IMatchService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IOddsService _oddsService;
 
-        public MatchService(ApplicationDbContext context)
+        public MatchService(ApplicationDbContext context, IOddsService oddsService)
         {
             _context = context;
+            _oddsService = oddsService;
         }
 
         public async Task<IEnumerable<MatchViewModel>> GetLiveMatchesAsync()
@@ -21,7 +23,31 @@ namespace FutebolSimplesBetsHub.Services
                 .OrderBy(m => m.MatchDate)
                 .ToListAsync();
 
-            return matches.Select(MapToViewModel);
+            var result = new List<MatchViewModel>();
+
+            // Atualizar odds e horários com dados realistas da API
+            foreach (var match in matches)
+            {
+                var (home, draw, away, matchTime, realTeams) = await _oddsService.GetRealisticOddsAsync();
+                match.OddsParticipant1 = home;
+                match.OddsDraw = draw;
+                match.OddsParticipant2 = away;
+                match.MatchDate = matchTime;
+                
+                var viewModel = MapToViewModel(match);
+                if (!string.IsNullOrWhiteSpace(realTeams) && realTeams.Contains(" vs "))
+                {
+                    var parts = realTeams.Split(" vs ", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length >= 2)
+                    {
+                        viewModel.Participant1 = parts[0];
+                        viewModel.Participant2 = parts[1];
+                    }
+                }
+                result.Add(viewModel);
+            }
+
+            return result;
         }
 
         public async Task<IEnumerable<MatchViewModel>> GetUpcomingMatchesAsync()
@@ -31,7 +57,31 @@ namespace FutebolSimplesBetsHub.Services
                 .OrderBy(m => m.MatchDate)
                 .ToListAsync();
 
-            return matches.Select(MapToViewModel);
+            var result = new List<MatchViewModel>();
+
+            // Atualizar odds e horários com dados realistas da API
+            foreach (var match in matches)
+            {
+                var (home, draw, away, matchTime, realTeams) = await _oddsService.GetRealisticOddsAsync();
+                match.OddsParticipant1 = home;
+                match.OddsDraw = draw;
+                match.OddsParticipant2 = away;
+                match.MatchDate = matchTime;
+                
+                var viewModel = MapToViewModel(match);
+                if (!string.IsNullOrWhiteSpace(realTeams) && realTeams.Contains(" vs "))
+                {
+                    var parts = realTeams.Split(" vs ", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length >= 2)
+                    {
+                        viewModel.Participant1 = parts[0];
+                        viewModel.Participant2 = parts[1];
+                    }
+                }
+                result.Add(viewModel);
+            }
+
+            return result;
         }
 
         public async Task<IEnumerable<MatchViewModel>> GetAllMatchesAsync()
@@ -40,7 +90,31 @@ namespace FutebolSimplesBetsHub.Services
                 .OrderBy(m => m.MatchDate)
                 .ToListAsync();
 
-            return matches.Select(MapToViewModel);
+            var result = new List<MatchViewModel>();
+
+            // Atualizar odds e horários com dados realistas da API
+            foreach (var match in matches)
+            {
+                var (home, draw, away, matchTime, realTeams) = await _oddsService.GetRealisticOddsAsync();
+                match.OddsParticipant1 = home;
+                match.OddsDraw = draw;
+                match.OddsParticipant2 = away;
+                match.MatchDate = matchTime;
+                
+                var viewModel = MapToViewModel(match);
+                if (!string.IsNullOrWhiteSpace(realTeams) && realTeams.Contains(" vs "))
+                {
+                    var parts = realTeams.Split(" vs ", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length >= 2)
+                    {
+                        viewModel.Participant1 = parts[0];
+                        viewModel.Participant2 = parts[1];
+                    }
+                }
+                result.Add(viewModel);
+            }
+
+            return result;
         }
 
         public async Task<IEnumerable<MatchViewModel>> GetMatchesByCompetitionAsync(string competitionId)
@@ -67,7 +141,17 @@ namespace FutebolSimplesBetsHub.Services
 
         public async Task<Match?> GetMatchByIdAsync(int id)
         {
-            return await _context.Matches.FindAsync(id);
+            var match = await _context.Matches.FindAsync(id);
+            if (match != null)
+            {
+                // Atualizar odds e horários com dados realistas da API
+                var (home, draw, away, matchTime, realTeams) = await _oddsService.GetRealisticOddsAsync();
+                match.OddsParticipant1 = home;
+                match.OddsDraw = draw;
+                match.OddsParticipant2 = away;
+                match.MatchDate = matchTime;
+            }
+            return match;
         }
 
         public async Task<IEnumerable<string>> GetCompetitionsAsync()

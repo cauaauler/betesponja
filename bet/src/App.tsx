@@ -25,10 +25,10 @@ const App = () => (
           <Navbar />
           <main className="flex-1">
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Matches />} />
               <Route path="/partidas" element={<Matches />} />
               <Route path="/minhas-apostas" element={<MyBets />} />
-              <Route path="/perfil" element={<Profile />} />
+              {/*<Route path="/perfil" element={<Profile />} />*/}
               <Route path="/login" element={<Login />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

@@ -29,15 +29,18 @@
         </div>
     </div>
     <div class="grid grid-cols-3 gap-2 mb-4">
-        <button class="bg-gray-100 hover:bg-blue-900 hover:text-white p-3 rounded-lg text-center transition-colors group border-2 border-transparent hover:border-yellow-400">
+        <button onclick="openBetModal(@Model.Id, 'participant1', @Model.OddsParticipant1.ToString("F2", System.Globalization.CultureInfo.InvariantCulture), '@Html.Raw(Html.Encode(Model.Participant1))', '@Html.Raw(Html.Encode(Model.Participant2))', '@Html.Raw(Html.Encode(Model.Competition))')" 
+                class="bg-gray-100 hover:bg-blue-900 hover:text-white p-3 rounded-lg text-center transition-colors group border-2 border-transparent hover:border-yellow-400">
             <div class="text-xs text-gray-600 group-hover:text-white/80">@Model.Participant1</div>
             <div class="font-bold">@Model.OddsParticipant1.ToString("F2")</div>
         </button>
-        <button class="bg-gray-100 hover:bg-pink-400 hover:text-white p-3 rounded-lg text-center transition-colors group border-2 border-transparent hover:border-yellow-400">
+        <button onclick="openBetModal(@Model.Id, 'draw', @Model.OddsDraw.ToString("F2", System.Globalization.CultureInfo.InvariantCulture), '@Html.Raw(Html.Encode(Model.Participant1))', '@Html.Raw(Html.Encode(Model.Participant2))', '@Html.Raw(Html.Encode(Model.Competition))')" 
+                class="bg-gray-100 hover:bg-pink-400 hover:text-white p-3 rounded-lg text-center transition-colors group border-2 border-transparent hover:border-yellow-400">
             <div class="text-xs text-gray-600 group-hover:text-white/80">Empate</div>
             <div class="font-bold">@Model.OddsDraw.ToString("F2")</div>
         </button>
-        <button class="bg-gray-100 hover:bg-blue-900 hover:text-white p-3 rounded-lg text-center transition-colors group border-2 border-transparent hover:border-yellow-400">
+        <button onclick="openBetModal(@Model.Id, 'participant2', @Model.OddsParticipant2.ToString("F2", System.Globalization.CultureInfo.InvariantCulture), '@Html.Raw(Html.Encode(Model.Participant1))', '@Html.Raw(Html.Encode(Model.Participant2))', '@Html.Raw(Html.Encode(Model.Competition))')" 
+                class="bg-gray-100 hover:bg-blue-900 hover:text-white p-3 rounded-lg text-center transition-colors group border-2 border-transparent hover:border-yellow-400">
             <div class="text-xs text-gray-600 group-hover:text-white/80">@Model.Participant2</div>
             <div class="font-bold">@Model.OddsParticipant2.ToString("F2")</div>
         </button>

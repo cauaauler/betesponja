@@ -7,10 +7,10 @@ const Navbar = () => {
   const location = useLocation();
   
   const navItems = [
-    { path: '/', label: 'Home', icon: Home },
+    { path: '/', label: 'Competições', icon: Home },
     { path: '/partidas', label: 'Competições', icon: Calendar },
     { path: '/minhas-apostas', label: 'Minhas Apostas', icon: Trophy },
-    { path: '/perfil', label: 'Perfil', icon: User },
+ //   { path: '/perfil', label: 'Perfil', icon: User },
   ];
 
   return (

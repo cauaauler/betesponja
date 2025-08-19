@@ -913,3 +913,4 @@
 /home/a/Área de Trabalho/betesponja/bet/obj/Debug/net9.0/FutebolSimplesBetsHub.pdb
 /home/a/Área de Trabalho/betesponja/bet/obj/Debug/net9.0/FutebolSimplesBetsHub.genruntimeconfig.cache
 /home/a/Área de Trabalho/betesponja/bet/obj/Debug/net9.0/ref/FutebolSimplesBetsHub.dll
+/home/a/Área de Trabalho/betesponja/bet/bin/Debug/net9.0/FutebolSimplesBetsHub.staticwebassets.runtime.json

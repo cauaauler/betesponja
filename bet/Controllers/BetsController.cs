@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using FutebolSimplesBetsHub.Services;
 using FutebolSimplesBetsHub.Models.ViewModels;
+using System.Text.Json;
 
 namespace FutebolSimplesBetsHub.Controllers
 {
@@ -34,7 +35,7 @@ namespace FutebolSimplesBetsHub.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(BetViewModel betViewModel)
+        public async Task<IActionResult> Create([FromBody] BetViewModel betViewModel)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (!userId.HasValue)

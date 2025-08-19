@@ -1,1 +1,20 @@
-{"Version":1,"Hash":"Mh/oXocrdLiWonzGfUz3Rgn5rC9C0jqJ876egGfwGc8=","Source":"FutebolSimplesBetsHub","BasePath":"_content/FutebolSimplesBetsHub","Mode":"Default","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}
+{
+  "Version": 1,
+  "Hash": "ltpfe0KijTRlDQJA7qWBs8A9INTGgXXYaoaoLShMW5I=",
+  "Source": "FutebolSimplesBetsHub",
+  "BasePath": "_content/FutebolSimplesBetsHub",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "FutebolSimplesBetsHub/wwwroot",
+      "Source": "FutebolSimplesBetsHub",
+      "ContentRoot": "/home/a/Área de Trabalho/betesponja/bet/wwwroot/",
+      "BasePath": "_content/FutebolSimplesBetsHub",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [],
+  "Endpoints": []
+}

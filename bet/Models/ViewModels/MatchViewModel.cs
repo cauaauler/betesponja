@@ -13,6 +13,7 @@ namespace FutebolSimplesBetsHub.Models.ViewModels
         public decimal OddsDraw { get; set; }
         public decimal OddsParticipant2 { get; set; }
         public bool IsLive { get; set; }
+        public string RealTeams { get; set; } = string.Empty;
         
         public MatchOddsViewModel Odds => new()
         {

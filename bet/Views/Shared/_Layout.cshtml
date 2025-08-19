@@ -9,14 +9,14 @@
 <body class="bg-gray-100 min-h-screen flex flex-col">
     <nav class="bg-blue-900 text-white py-4 shadow">
         <div class="container mx-auto flex justify-between items-center px-4">
-            <a href="/" class="text-2xl font-bold">Fenda do Biquíni Bets</a>
+            <a href="/" class="text-2xl font-bold">Bet Esponja</a>
             <div class="space-x-4">
                 <a href="/" class="hover:underline">Home</a>
                 <a href="/Matches" class="hover:underline">Competições</a>
                 @if (Context.Session.GetInt32("UserId").HasValue)
                 {
                     <a href="/Bets" class="hover:underline">Minhas Apostas</a>
-                    <a href="/Account/Profile" class="hover:underline">Perfil</a>
+                    //<a href="/Account/Profile" class="hover:underline">Perfil</a>
                     <a href="/Account/Logout" class="hover:underline">Sair</a>
                 }
                 else
@@ -35,5 +35,116 @@
             &copy; @DateTime.Now.Year Fenda do Biquíni Bets. Todos os direitos reservados.
         </div>
     </footer>
+    
+    <!-- Global JavaScript for Betting -->
+    <script>
+    // Função global para abrir modal de aposta
+    function openBetModal(matchId, betType, odds, participant1, participant2, competition) {
+        console.log('Opening modal with:', { matchId, betType, odds, participant1, participant2, competition });
+        
+        // Armazenar dados da aposta
+        window.currentBetData = {
+            matchId: parseInt(matchId),
+            betType: betType,
+            odds: parseFloat(odds),
+            participant1: participant1,
+            participant2: participant2,
+            competition: competition
+        };
+        
+        // Atualizar conteúdo do modal
+        const matchTitle = document.getElementById('matchTitle');
+        const matchCompetition = document.getElementById('matchCompetition');
+        const betOdds = document.getElementById('betOdds');
+        const betTypeDisplay = document.getElementById('betTypeDisplay');
+        
+        if (matchTitle) matchTitle.textContent = `${participant1} vs ${participant2}`;
+        if (matchCompetition) matchCompetition.textContent = competition;
+        if (betOdds) betOdds.textContent = parseFloat(odds).toFixed(2);
+        
+        let displayText = '';
+        if (betType === 'participant1') {
+            displayText = participant1;
+        } else if (betType === 'participant2') {
+            displayText = participant2;
+        } else if (betType === 'draw') {
+            displayText = 'Empate';
+        }
+        
+        if (betTypeDisplay) betTypeDisplay.textContent = displayText;
+        
+        // Limpar campos
+        const betAmount = document.getElementById('betAmount');
+        const potentialWin = document.getElementById('potentialWin');
+        if (betAmount) betAmount.value = '';
+        if (potentialWin) potentialWin.textContent = 'R$ 0,00';
+        
+        // Mostrar modal
+        const modal = document.getElementById('betModal');
+        if (modal) modal.classList.remove('hidden');
+    }
+    
+    // Função global para calcular ganho potencial
+    function calculatePotentialWin() {
+        const amount = parseFloat(document.getElementById('betAmount').value) || 0;
+        const odds = window.currentBetData?.odds || 0;
+        const potentialWin = amount * odds;
+        document.getElementById('potentialWin').textContent = `R$ ${potentialWin.toFixed(2)}`;
+    }
+    
+    // Função global para confirmar aposta
+    function confirmBet() {
+        const amount = parseFloat(document.getElementById('betAmount').value);
+        if (!amount || amount <= 0) {
+            alert('Por favor, insira um valor válido para a aposta.');
+            return;
+        }
+        
+        if (!window.currentBetData) {
+            alert('Erro: dados da aposta não encontrados.');
+            return;
+        }
+        
+        const betData = {
+            MatchId: window.currentBetData.matchId,
+            BetType: window.currentBetData.betType,
+            Odds: window.currentBetData.odds,
+            Amount: amount
+        };
+        
+        // Fazer a chamada AJAX para criar a aposta
+        fetch('/Bets/Create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(betData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                closeBetModal();
+                // Recarregar a página para mostrar a nova aposta
+                location.reload();
+            } else {
+                alert('Erro: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao criar aposta:', error);
+            alert('Erro ao processar a aposta. Tente novamente.');
+        });
+    }
+    
+    // Função global para fechar modal
+    function closeBetModal() {
+        document.getElementById('betModal').classList.add('hidden');
+        // Limpar dados
+        window.currentBetData = null;
+        document.getElementById('betAmount').value = '';
+        document.getElementById('potentialWin').textContent = 'R$ 0,00';
+    }
+    </script>
 </body>
 </html> 
